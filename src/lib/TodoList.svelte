@@ -1,3 +1,5 @@
+<svelte:options immutable={true} />
+
 <script>
 	import { createEventDispatcher } from 'svelte';
 
@@ -6,24 +8,37 @@
 	export let todos = [];
 	let inputText = '';
 	const handleAddtodo = () => {
-		const isNotCancelled = dispatch(
-			'addtodo',
-			{
-				title: inputText
-			},
-			{ cancelable: true }
-		);
-		if (isNotCancelled) {
-			inputText = '';
+		if (inputText !== '') {
+			const isNotCancelled = dispatch(
+				'addtodo',
+				{
+					title: inputText
+				},
+				{ cancelable: true }
+			);
+			if (isNotCancelled) {
+				inputText = '';
+			}
 		}
 	};
+
+	function handleRemoveItems(id){
+		dispatch('removetodo',{
+			id:id
+		})
+	}
 </script>
 
 <div class="todo-list-wrapper">
 	<ul>
-		{#each todos as { id, title }, index (id)}
-			{@const number = index + 1}
-			<li>{number} - {title}</li>
+		{#each todos as { id, title, completed }, index (id)}
+			<li>
+				<label>
+					<input type="checkbox" checked={completed} />
+					{title}
+				</label>
+				<button on:click={()=>handleRemoveItems(id)}>Remove</button>
+			</li>
 		{/each}
 	</ul>
 

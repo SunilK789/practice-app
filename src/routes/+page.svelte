@@ -8,17 +8,30 @@
 		{ id: uuid(), title: 'Todo 3', completed: true }
 	];
 
-	function handleAddtodo(event){
-		event.preventDefault();
-		console.log(event);
+	function handleAddtodo(event) {
+		//event.preventDefault();
+		todos = [
+			...todos,
+			{
+				id: uuid(),
+				title: event.detail.title,
+				completed: false
+			}
+		];
+
+		todos = todos;
+		//console.log(event);
 	}
-	
+	function handlRemoveTodos(event) {
+		console.log('Todo id: ', event.detail.id);
+		todos = todos.filter(t=>t.id!==event.detail.id);
+	}
+
 	$: console.log(todos);
 </script>
 
 <h2>{todos.length} Todos</h2>
-<TodoList {todos} on:addtodo={handleAddtodo} />
-
+<TodoList {todos} on:addtodo={handleAddtodo} on:removetodo={handlRemoveTodos} />
 
 <style>
 </style>
