@@ -4,7 +4,7 @@
 
 	let todos = [
 		{ id: uuid(), title: 'Todo 1', completed: true },
-		{ id: uuid(), title: 'Todo 2', completed: true },
+		{ id: uuid(), title: 'Todo 2', completed: false },
 		{ id: uuid(), title: 'Todo 3', completed: true }
 	];
 
@@ -23,15 +23,26 @@
 		//console.log(event);
 	}
 	function handlRemoveTodos(event) {
-		console.log('Todo id: ', event.detail.id);
+		//console.log('Todo id: ', event.detail.id);
 		todos = todos.filter(t=>t.id!==event.detail.id);
 	}
+	function toggleCheckBox(event) {
+		//console.log('Todo id: ', event.detail.id);
+		todos = todos.map(todo=>{
+			if(todo.id === event.detail.id)
+			{
+				return {...todo, completed: event.detail.value}
+			}
+			return {...todo}
+		})
+		
+	}
 
-	$: console.log(todos);
+	//$: console.log(todos);
 </script>
 
 <h2>{todos.length} Todos</h2>
-<TodoList {todos} on:addtodo={handleAddtodo} on:removetodo={handlRemoveTodos} />
+<TodoList {todos} on:addtodo={handleAddtodo} on:removetodo={handlRemoveTodos} on:toggleCheckBox= {toggleCheckBox} />
 
 <style>
 </style>
