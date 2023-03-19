@@ -1,6 +1,7 @@
 <script>
 	import TodoList from '../lib/TodoList.svelte';
 	import { v4 as uuid } from 'uuid';
+	import { tick } from 'svelte';
 
 	let todoList;
 	let showHide = true;
@@ -10,8 +11,9 @@
 		{ id: uuid(), title: 'Todo 3', completed: true }
 	];
 
-	function handleAddtodo(event) {
+	async function handleAddtodo(event) {
 		event.preventDefault();
+		console.log(document.querySelectorAll(".todo-list ul li"));
 			todos = [
 				...todos,
 				{
@@ -20,6 +22,10 @@
 					completed: false
 				}
 			];
+			
+			// when we update anything this is not directly updated in DOM - here tick() will wait for DOM to be updated
+			await tick();
+			console.log(document.querySelectorAll(".todo-list ul li"));
 		todoList.clearInput();
 
 		//todos = todos;
