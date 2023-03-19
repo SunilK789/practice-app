@@ -2,6 +2,7 @@
 
 <script>
 	import { createEventDispatcher } from 'svelte';
+	import { debug } from 'svelte/internal';
 
 	const dispatch = createEventDispatcher();
 
@@ -49,6 +50,7 @@
 <div class="todo-list-wrapper">
 	<ul>
 		{#each todos as { id, title, completed }, index (id)}
+		<!-- {@debug id, title} -->
 			<li>
 				<label>
 					<input  on:input={(event)=>{
@@ -57,6 +59,7 @@
 						
 					}} type="checkbox" checked={completed} />
 					{title}
+					{@debug id, title}
 				</label>
 				<button on:click={()=>handleRemoveItems(id)}>Remove</button>
 			</li>
