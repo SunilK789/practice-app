@@ -6,6 +6,16 @@
 	const dispatch = createEventDispatcher();
 
 	export let todos = [];
+	let input;
+	export const readonly  = "read only";
+	export function clearInput(){
+		inputText = '';
+	}
+
+	export function focusInput(){
+		input.focus();
+	}
+
 	let inputText = '';
 	const handleAddtodo = () => {
 		if (inputText !== '') {
@@ -16,9 +26,9 @@
 				},
 				{ cancelable: true }
 			);
-			if (isNotCancelled) {
-				inputText = '';
-			}
+			// if (isNotCancelled) {
+			// 	inputText = '';
+			// }
 		}
 	};
 
@@ -41,7 +51,7 @@
 		{#each todos as { id, title, completed }, index (id)}
 			<li>
 				<label>
-					<input on:input={(event)=>{
+					<input  on:input={(event)=>{
 						event.currentTarget.checked = completed;
 						handleToggleCheckBox(id, !completed);
 						
@@ -54,8 +64,8 @@
 	</ul>
 
 	<form class="add-todo-form" on:submit|preventDefault={handleAddtodo}>
-		<input bind:value={inputText} />
-		<button type="submit">Add</button>
-		{inputText}
+		<input bind:this={input} bind:value={inputText} />
+		<button type="submit">Add</button>		
+		
 	</form>
 </div>
