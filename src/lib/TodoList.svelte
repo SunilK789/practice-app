@@ -3,7 +3,7 @@
 <script>
 	import { createEventDispatcher, onMount, onDestroy, beforeUpdate, afterUpdate } from 'svelte';
 	import IoIosTrash from 'svelte-icons/io/IoIosTrash.svelte';
-  import Button from './Button.svelte';
+	import Button from './Button.svelte';
 
 	onMount(() => {});
 	onDestroy(() => {});
@@ -15,7 +15,10 @@
 
 	const dispatch = createEventDispatcher();
 
-	export let todos = [];
+	export let todos = null;
+	export let error = null;
+	export let isLoading = null;
+
 	let input, listDiv, autoScroll;
 	let prevTodo = todos;
 	export function clearInput() {
@@ -53,11 +56,16 @@
 	}
 
 	$: {
-		autoScroll = todos.length > prevTodo.length;
+		autoScroll = todos && prevTodo && todos.length > prevTodo.length;
 	}
 </script>
 
 <div class="todo-list-wrapper">
+	{#if isLoading}
+	<p class="no-item-text">Loading...</p>
+	{:else if error}
+	<p class="no-item-text">{error}</p>
+	{:else if todos}
 	<div bind:this={listDiv} class="todo-list">
 		{#if todos.length === 0}
 			<p class="no-item-text">Nothing to display, please add an item!</p>
@@ -89,6 +97,7 @@
 			</ul>
 		{/if}
 	</div>
+	{/if}
 	<form class="add-todo-from" on:submit|preventDefault={handleAddtodo}>
 		<input bind:this={input} bind:value={inputText} />
 		<!-- <button disabled={!inputText} class="add-todo-button" type="submit">Add</button> -->
@@ -160,13 +169,13 @@
 			}
 		}
 
-		.add-todo-from{
+		.add-todo-from {
 			padding: 15px;
 			background-color: #303030;
 			display: flex;
 			flex-wrap: wrap;
 			border-top: 1px solid #4b4b4b;
-			
+
 			// .add-todo-button{
 			// 	background-color: red;
 			// 	color: #fff;
@@ -180,7 +189,7 @@
 			// 	}
 			// }
 
-			input{
+			input {
 				flex: 1;
 				background-color: #424242;
 				border: 1px solid #4b4b4b;
