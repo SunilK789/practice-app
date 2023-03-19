@@ -4,6 +4,14 @@
 	import { createEventDispatcher, onMount, onDestroy, beforeUpdate, afterUpdate } from 'svelte';
 	import IoIosTrash from 'svelte-icons/io/IoIosTrash.svelte';
 	import Button from './Button.svelte';
+	
+	export let todos = null;
+	export let error = null;
+	export let isLoading = null;
+	export let disabelAdding = null;
+
+	let input, listDiv, autoScroll;
+	let prevTodo = todos;
 
 	onMount(() => {});
 	onDestroy(() => {});
@@ -15,12 +23,7 @@
 
 	const dispatch = createEventDispatcher();
 
-	export let todos = null;
-	export let error = null;
-	export let isLoading = null;
-
-	let input, listDiv, autoScroll;
-	let prevTodo = todos;
+	
 	export function clearInput() {
 		inputText = '';
 	}
@@ -99,9 +102,8 @@
 	</div>
 	{/if}
 	<form class="add-todo-from" on:submit|preventDefault={handleAddtodo}>
-		<input bind:this={input} bind:value={inputText} />
-		<!-- <button disabled={!inputText} class="add-todo-button" type="submit">Add</button> -->
-		<Button class="add-todo-button" type="submit" disabled={!inputText}>Add</Button>
+		<input disabled={disabelAdding} bind:this={input} bind:value={inputText} />
+		<Button class="add-todo-button" type="submit" disabled={!inputText || disabelAdding}>Add</Button>
 	</form>
 </div>
 
