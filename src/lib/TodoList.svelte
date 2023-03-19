@@ -4,11 +4,12 @@
 	import { createEventDispatcher, onMount, onDestroy, beforeUpdate, afterUpdate } from 'svelte';
 	import IoIosTrash from 'svelte-icons/io/IoIosTrash.svelte';
 	import Button from './Button.svelte';
-	
+
 	export let todos = null;
 	export let error = null;
 	export let isLoading = null;
 	export let disabelAdding = null;
+	export let disabledItems = [];
 
 	let input, listDiv, autoScroll;
 	let prevTodo = todos;
@@ -16,14 +17,9 @@
 	onMount(() => {});
 	onDestroy(() => {});
 	beforeUpdate(() => {});
-	afterUpdate(() => {
-		if (autoScroll) listDiv.scrollTo(0, listDiv.scrollHeight);
-		autoScroll = false;
-	});
 
 	const dispatch = createEventDispatcher();
 
-	
 	export function clearInput() {
 		inputText = '';
 	}
@@ -61,49 +57,56 @@
 	$: {
 		autoScroll = todos && prevTodo && todos.length > prevTodo.length;
 	}
+	afterUpdate(() => {
+		if (autoScroll) listDiv.scrollTo(0, listDiv.scrollHeight);
+		autoScroll = false;
+	});
 </script>
 
 <div class="todo-list-wrapper">
 	{#if isLoading}
-	<p class="no-item-text">Loading...</p>
+		<p class="no-item-text">Loading...</p>
 	{:else if error}
-	<p class="no-item-text">{error}</p>
+		<p class="no-item-text">{error}</p>
 	{:else if todos}
-	<div bind:this={listDiv} class="todo-list">
-		{#if todos.length === 0}
-			<p class="no-item-text">Nothing to display, please add an item!</p>
-		{:else}
-			<ul>
-				{#each todos as { id, title, completed }, index (id)}
-					<!-- {@debug id, title} -->
-					<li class:completed>
-						<label>
-							<input
-								on:input={(event) => {
-									event.currentTarget.checked = completed;
-									handleToggleCheckBox(id, !completed);
-								}}
-								type="checkbox"
-								checked={completed}
-							/>
-							{title}
-						</label>
-						<button
-							class="remove-todo-button"
-							aria-label="Remove todo:{title}"
-							on:click={() => handleRemoveItems(id)}
-						>
-							<span style:width="15px" style:display="inline-block"><IoIosTrash /></span></button
-						>
-					</li>
-				{/each}
-			</ul>
-		{/if}
-	</div>
+		<div bind:this={listDiv} class="todo-list">
+			{#if todos.length === 0}
+				<p class="no-item-text">Nothing to display, please add an item!</p>
+			{:else}
+				<ul>
+					{#each todos as { id, title, completed }, index (id)}
+						<!-- {@debug id, title} -->
+						<li class:completed>
+							<label>
+								<input
+									disabled={disabledItems.includes(id)}
+									on:input={(event) => {
+										event.currentTarget.checked = completed;
+										handleToggleCheckBox(id, !completed);
+									}}
+									type="checkbox"
+									checked={completed}
+								/>
+								{title}
+							</label>
+							<button
+								disabled={disabledItems.includes(id)}
+								class="remove-todo-button"
+								aria-label="Remove todo:{title}"
+								on:click={() => handleRemoveItems(id)}
+							>
+								<span style:width="15px" style:display="inline-block"><IoIosTrash /></span></button
+							>
+						</li>
+					{/each}
+				</ul>
+			{/if}
+		</div>
 	{/if}
 	<form class="add-todo-from" on:submit|preventDefault={handleAddtodo}>
 		<input disabled={disabelAdding} bind:this={input} bind:value={inputText} />
-		<Button class="add-todo-button" type="submit" disabled={!inputText || disabelAdding}>Add</Button>
+		<Button class="add-todo-button" type="submit" disabled={!inputText || disabelAdding}>Add</Button
+		>
 	</form>
 </div>
 
@@ -134,6 +137,10 @@
 					position: relative;
 					color: #fff;
 
+					:disabled {
+						cursor: not-allowed;
+						opacity: 0.4;
+					}
 					&:hover {
 						.remove-todo-button {
 							display: block;
@@ -162,6 +169,11 @@
 						position: absolute;
 						right: 10px;
 						display: none;
+
+						:disabled {
+							cursor: not-allowed;
+							opacity: 0.4;
+						}
 
 						:global(svg path) {
 							fill: #bd1414;
