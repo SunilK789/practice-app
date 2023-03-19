@@ -5,27 +5,31 @@
 
 	let todoList;
 	let showHide = true;
+
+	
+
 	let todos = [
 		{ id: uuid(), title: 'Todo 1', completed: true },
 		{ id: uuid(), title: 'Todo 2', completed: false },
-		{ id: uuid(), title: 'Todo 3', completed: true }
+		{ id: uuid(), title: 'Todo 3', completed: true },
+		{
+			id: uuid(),
+			title:
+				'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making',
+			completed: true
+		}
 	];
 
 	async function handleAddtodo(event) {
 		event.preventDefault();
-		console.log(document.querySelectorAll(".todo-list ul li"));
-			todos = [
-				...todos,
-				{
-					id: uuid(),
-					title: event.detail.title,
-					completed: false
-				}
-			];
-			
-			// when we update anything this is not directly updated in DOM - here tick() will wait for DOM to be updated
-			await tick();
-			console.log(document.querySelectorAll(".todo-list ul li"));
+		todos = [
+			...todos,
+			{
+				id: uuid(),
+				title: event.detail.title,
+				completed: false
+			}
+		];
 		todoList.clearInput();
 
 		//todos = todos;
@@ -55,15 +59,16 @@
 </label>
 
 {#if showHide}
-<div class="mainDiv" style:max-width="200px">
-<TodoList
-	bind:this = {todoList}
-	{todos}
-	on:addtodo={handleAddtodo}
-	on:removetodo={handlRemoveTodos}
-	on:toggleCheckBox={toggleCheckBox}
-/>
-</div>
+	<div class="mainDiv" style:max-width="400px">
+		<TodoList
+			bind:this={todoList}
+			{todos}
+			on:addtodo={handleAddtodo}
+			on:removetodo={handlRemoveTodos}
+			on:toggleCheckBox={toggleCheckBox}
+		/>
+	</div>
 {/if}
+
 <style>
 </style>
