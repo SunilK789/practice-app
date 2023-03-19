@@ -49,6 +49,7 @@
 </label>
 
 {#if showHide}
+<div class="mainDiv" style:max-width="200px">
 <TodoList
 	bind:this = {todoList}
 	{todos}
@@ -56,6 +57,7 @@
 	on:removetodo={handlRemoveTodos}
 	on:toggleCheckBox={toggleCheckBox}
 />
+</div>
 {/if}
 <style>
 </style>

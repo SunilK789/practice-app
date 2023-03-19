@@ -19,13 +19,15 @@
 		}
 	});
 	afterUpdate(() => {
-		console.log(listDiv.offsetHeight);
+		if (autoScroll) listDiv.scrollTo(0, listDiv.scrollHeight);
+		autoScroll = false;
 	});
 
 	const dispatch = createEventDispatcher();
 
 	export let todos = [];
-	let input, listDiv;
+	let input, listDiv, autoScroll;
+	let prevTodo = todos;
 	export const readonly = 'read only';
 	export function clearInput() {
 		inputText = '';
@@ -60,6 +62,10 @@
 			value
 		});
 	}
+
+	$: {
+		autoScroll = todos.length > prevTodo.length;
+	}
 </script>
 
 <div class="todo-list-wrapper">
@@ -89,3 +95,10 @@
 		<button type="submit">Add</button>
 	</form>
 </div>
+
+<style>
+	.todo-list {
+		max-height: 150px;
+		overflow: auto;
+	}
+</style>
