@@ -3,6 +3,7 @@
 	import { v4 as uuid } from 'uuid';
 
 	let todoList;
+	let showHide = true;
 	let todos = [
 		{ id: uuid(), title: 'Todo 1', completed: true },
 		{ id: uuid(), title: 'Todo 2', completed: false },
@@ -11,7 +12,6 @@
 
 	function handleAddtodo(event) {
 		event.preventDefault();
-		setTimeout(() => {
 			todos = [
 				...todos,
 				{
@@ -20,7 +20,6 @@
 					completed: false
 				}
 			];
-		}, 1000);
 		todoList.clearInput();
 
 		//todos = todos;
@@ -44,7 +43,12 @@
 </script>
 
 <h2>{todos.length} Todos</h2>
+<label>
+	<input type="checkbox" bind:checked={showHide} />
+	Show/Hide List
+</label>
 
+{#if showHide}
 <TodoList
 	bind:this = {todoList}
 	{todos}
@@ -52,7 +56,6 @@
 	on:removetodo={handlRemoveTodos}
 	on:toggleCheckBox={toggleCheckBox}
 />
-<button on:click={()=>{todoList.focusInput()}}>Focus Input</button>
-
+{/if}
 <style>
 </style>

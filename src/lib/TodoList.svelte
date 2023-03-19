@@ -1,19 +1,37 @@
 <svelte:options immutable={true} />
 
 <script>
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount, onDestroy, beforeUpdate, afterUpdate } from 'svelte';
 	import { debug } from 'svelte/internal';
+
+	onMount(() => {
+		console.log('Mounted!');
+		return () => {
+			console.log('Destroyed2');
+		};
+	});
+	onDestroy(() => {
+		console.log('Destroyed!');
+	});
+	beforeUpdate(() => {
+		if (listDiv) {
+			console.log(listDiv.offsetHeight);
+		}
+	});
+	afterUpdate(() => {
+		console.log(listDiv.offsetHeight);
+	});
 
 	const dispatch = createEventDispatcher();
 
 	export let todos = [];
-	let input;
-	export const readonly  = "read only";
-	export function clearInput(){
+	let input, listDiv;
+	export const readonly = 'read only';
+	export function clearInput() {
 		inputText = '';
 	}
 
-	export function focusInput(){
+	export function focusInput() {
 		input.focus();
 	}
 
@@ -27,48 +45,47 @@
 				},
 				{ cancelable: true }
 			);
-			// if (isNotCancelled) {
-			// 	inputText = '';
-			// }
 		}
 	};
 
-	function handleRemoveItems(id){
-		dispatch('removetodo',{
-			id:id
-		})
+	function handleRemoveItems(id) {
+		dispatch('removetodo', {
+			id: id
+		});
 	}
 
-	function handleToggleCheckBox(id,value){
-		dispatch('toggleCheckBox',{
+	function handleToggleCheckBox(id, value) {
+		dispatch('toggleCheckBox', {
 			id,
 			value
-		})
+		});
 	}
 </script>
 
 <div class="todo-list-wrapper">
-	<ul>
-		{#each todos as { id, title, completed }, index (id)}
-		<!-- {@debug id, title} -->
-			<li>
-				<label>
-					<input  on:input={(event)=>{
-						event.currentTarget.checked = completed;
-						handleToggleCheckBox(id, !completed);
-						
-					}} type="checkbox" checked={completed} />
-					{title}
-					{@debug id, title}
-				</label>
-				<button on:click={()=>handleRemoveItems(id)}>Remove</button>
-			</li>
-		{/each}
-	</ul>
-
+	<div bind:this={listDiv} class="todo-list">
+		<ul>
+			{#each todos as { id, title, completed }, index (id)}
+				<!-- {@debug id, title} -->
+				<li>
+					<label>
+						<input
+							on:input={(event) => {
+								event.currentTarget.checked = completed;
+								handleToggleCheckBox(id, !completed);
+							}}
+							type="checkbox"
+							checked={completed}
+						/>
+						{title}
+					</label>
+					<button on:click={() => handleRemoveItems(id)}>Remove</button>
+				</li>
+			{/each}
+		</ul>
+	</div>
 	<form class="add-todo-form" on:submit|preventDefault={handleAddtodo}>
 		<input bind:this={input} bind:value={inputText} />
-		<button type="submit">Add</button>		
-		
+		<button type="submit">Add</button>
 	</form>
 </div>
