@@ -9,13 +9,13 @@
 
 <button
 	on:click
-	disabled
 	style:--buttonBgColor={bgColor}
 	style:--buttonTextColor={textColor}
 	class:size-lg={size === 'large'}
 	class:size-sm={size === 'small'}
 	class:has-left={$$slots.leftContent}
 	class:shadow
+	{...$$restProps}
 >
 	{#if $$slots.leftContent}
 		<div
@@ -34,13 +34,15 @@
 		display: flex;
 		align-items: center;
 		border: none;
-		background-color: red;
-		color: #fff;
+		background-color: var(--buttonBgColor);
+		color: var(--buttonTextColor);
 		font-weight: bold;
 		border-radius: 5px;
 		cursor: pointer;
-	
-		&:disabled{
+		.left-content {
+			margin-right: 10px;
+		}
+		&:disabled {
 			opacity: 0.6;
 			cursor: not-allowed;
 		}

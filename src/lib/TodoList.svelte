@@ -3,6 +3,7 @@
 <script>
 	import { createEventDispatcher, onMount, onDestroy, beforeUpdate, afterUpdate } from 'svelte';
 	import IoIosTrash from 'svelte-icons/io/IoIosTrash.svelte';
+  import Button from './Button.svelte';
 
 	onMount(() => {});
 	onDestroy(() => {});
@@ -90,7 +91,8 @@
 	</div>
 	<form class="add-todo-from" on:submit|preventDefault={handleAddtodo}>
 		<input bind:this={input} bind:value={inputText} />
-		<button disabled={!inputText} class="add-todo-button" type="submit">Add</button>
+		<!-- <button disabled={!inputText} class="add-todo-button" type="submit">Add</button> -->
+		<Button class="add-todo-button" type="submit" disabled={!inputText}>Add</Button>
 	</form>
 </div>
 
@@ -165,18 +167,18 @@
 			flex-wrap: wrap;
 			border-top: 1px solid #4b4b4b;
 			
-			.add-todo-button{
-				background-color: red;
-				color: #fff;
-				border-radius: 5px;
-				margin: 0;
-				padding: 10px;
+			// .add-todo-button{
+			// 	background-color: red;
+			// 	color: #fff;
+			// 	border-radius: 5px;
+			// 	margin: 0;
+			// 	padding: 10px;
 
-				&:disabled{
-					cursor: not-allowed;
-					opacity: 0.5;
-				}
-			}
+			// 	&:disabled{
+			// 		cursor: not-allowed;
+			// 		opacity: 0.5;
+			// 	}
+			// }
 
 			input{
 				flex: 1;

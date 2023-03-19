@@ -2,24 +2,25 @@
 	import TodoList from '../lib/TodoList.svelte';
 	import { v4 as uuid } from 'uuid';
 	import { tick } from 'svelte';
+  import Button from '../lib/Button.svelte';
 
 	let todoList;
 	let showHide = true;
+	let todos = null;
+
+	function loadTodos() {
+		return fetch('https://jsonplaceholder.typicode.com/todos?_limit=10').then((response) => {
+			if (response.ok) {
+				return response.json();
+			} else {
+				throw new Error('An error has occurred!');
+			}
+		});
+	}
+
+	let promise = loadTodos();
 
 	
-
-	let todos = [
-		{ id: uuid(), title: 'Todo 1', completed: true },
-		{ id: uuid(), title: 'Todo 2', completed: false },
-		{ id: uuid(), title: 'Todo 3', completed: true },
-		{
-			id: uuid(),
-			title:
-				'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making',
-			completed: true
-		}
-	];
-
 	async function handleAddtodo(event) {
 		event.preventDefault();
 		todos = [
@@ -52,22 +53,32 @@
 	//$: console.log(todos);
 </script>
 
-<h2>{todos.length} Todos</h2>
 <label>
 	<input type="checkbox" bind:checked={showHide} />
 	Show/Hide List
 </label>
 
 {#if showHide}
-	<div class="mainDiv" style:max-width="400px">
-		<TodoList
-			bind:this={todoList}
-			{todos}
-			on:addtodo={handleAddtodo}
-			on:removetodo={handlRemoveTodos}
-			on:toggleCheckBox={toggleCheckBox}
-		/>
-	</div>
+	{#await promise}
+	<p>Loading...</p>
+	{:then todos}
+		<div class="mainDiv" style:max-width="400px">
+			<TodoList
+				bind:this={todoList}
+				{todos}
+				on:addtodo={handleAddtodo}
+				on:removetodo={handlRemoveTodos}
+				on:toggleCheckBox={toggleCheckBox}
+			/>
+		</div>
+
+		{:catch error}
+		<p>{error.message || 'An error occurred!'}</p>
+	{/await}
+
+	<Button on:click={()=>{
+		promise=loadTodos();
+	}}>Refresh</Button>
 {/if}
 
 <style>
