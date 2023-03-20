@@ -12,4 +12,3 @@
     {$location.error.message}
 {/if}
 
-{$settings.colorScheme}
