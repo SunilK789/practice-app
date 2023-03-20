@@ -3,6 +3,7 @@
 <script>
 	import { createEventDispatcher, onMount, onDestroy, beforeUpdate, afterUpdate } from 'svelte';
 	import IoIosTrash from 'svelte-icons/io/IoIosTrash.svelte';
+  import { scale } from 'svelte/transition';
 	import Button from './Button.svelte';
 
 	export let todos = null;
@@ -76,9 +77,10 @@
 				<ul>
 					{#each todos as { id, title, completed }, index (id)}
 						<!-- {@debug id, title} -->
-						<li class:completed>
+						<li>
+							<div transition:scale|local={{start:0.5}} class:completed={completed}>
 							<label>
-								<input
+								<input 
 									disabled={disabledItems.includes(id)}
 									on:input={(event) => {
 										event.currentTarget.checked = completed;
@@ -88,7 +90,7 @@
 									checked={completed}
 								/>
 								{title}
-							</label>
+							</label></div>
 							<button
 								disabled={disabledItems.includes(id)}
 								class="remove-todo-button"
@@ -160,6 +162,12 @@
 							margin: 0 10px 0 0;
 							cursor: pointer;
 						}
+
+						
+					}
+					.completed {
+						opacity: 0.5;
+						text-decoration: line-through;
 					}
 
 					.remove-todo-button {
@@ -190,19 +198,6 @@
 			flex-wrap: wrap;
 			border-top: 1px solid #4b4b4b;
 
-			// .add-todo-button{
-			// 	background-color: red;
-			// 	color: #fff;
-			// 	border-radius: 5px;
-			// 	margin: 0;
-			// 	padding: 10px;
-
-			// 	&:disabled{
-			// 		cursor: not-allowed;
-			// 		opacity: 0.5;
-			// 	}
-			// }
-
 			input {
 				flex: 1;
 				background-color: #424242;
@@ -210,6 +205,11 @@
 				color: #fff;
 				border-radius: 5px;
 				margin-right: 10px;
+
+				:disabled {
+						cursor: not-allowed;
+						opacity: 0.4;
+					}
 			}
 		}
 	}

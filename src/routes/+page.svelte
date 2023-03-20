@@ -2,6 +2,8 @@
 	import TodoList from '../lib/TodoList.svelte';
 	import { v4 as uuid } from 'uuid';
 	import { onMount, tick } from 'svelte';
+	import { debug } from 'svelte/internal';
+	import { fade, fly } from 'svelte/transition';
 
 	let todoList;
 	let showHide = true;
@@ -75,12 +77,37 @@
 		disabledItems = disabledItems.filter((itemId) => itemId !== id);
 	}
 	function toggleCheckBox(event) {
-		todos = todos.map((todo) => {
-			if (todo.id === event.detail.id) {
-				return { ...todo, completed: event.detail.value };
+		const value = event.detail.value;
+		const id = event.detail.id;
+
+		if (disabledItems.includes(id)) return;
+		disabledItems = [...disabledItems, id];
+
+		fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
+			method: 'PATCH',
+			body: JSON.stringify({
+				completed: value
+			}),
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8'
 			}
-			return { ...todo };
+		}).then(async (response) => {
+			if (response.ok) {
+				const updatedTodo = await response.json();
+				console.log(updatedTodo);
+				todos = todos.map((todo) => {
+					if (todo.id === id) {
+						return updatedTodo;
+					}
+
+					return { ...todo };
+				});
+			} else {
+				alert('An error has occurred!');
+			}
 		});
+
+		disabledItems = disabledItems.filter((itemId) => itemId !== id);
 	}
 </script>
 
@@ -90,7 +117,7 @@
 </label>
 
 {#if showHide}
-	<div class="mainDiv" style:max-width="400px">
+	<div transition:fade={{ delay: 500, duration: 300 }} class="mainDiv" style:max-width="400px">
 		<TodoList
 			bind:this={todoList}
 			{todos}
@@ -103,6 +130,12 @@
 			on:toggleCheckBox={toggleCheckBox}
 		/>
 	</div>
+	{#if todos}
+		<p>
+			Total Todos:{#key todos.length}
+				<span style:display="inline-block" in:fly|local={{ y: -10 }}> {todos.length}</span>{/key}
+		</p>
+	{/if}
 {/if}
 
 <style>
