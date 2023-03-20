@@ -14,6 +14,9 @@
 	export let disabledItems = [];
 	export let scrollOnAdd = undefined;
 
+	$: done = todos ? todos.filter((t) => t.completed) : [];
+	$: todo = todos ? todos.filter((t) => !t.completed) : [];
+
 	let input, listDiv, autoScroll, listDivScrollHeight;
 	let prevTodo = todos;
 
@@ -82,36 +85,43 @@
 				{#if todos.length === 0}
 					<p class="no-item-text">Nothing to display, please add an item!</p>
 				{:else}
-					<ul>
-						{#each todos as { id, title, completed }, index (id)}
-							<!-- {@debug id, title} -->
-							<li animate:flip>
-								<div transition:scale|local={{ start: 0.5 }} class:completed>
-									<label>
-										<input
-											disabled={disabledItems.includes(id)}
-											on:input={(event) => {
-												event.currentTarget.checked = completed;
-												handleToggleCheckBox(id, !completed);
-											}}
-											type="checkbox"
-											checked={completed}
-										/>
-										{title}
-									</label>
-								</div>
-								<button
-									disabled={disabledItems.includes(id)}
-									class="remove-todo-button"
-									aria-label="Remove todo:{title}"
-									on:click={() => handleRemoveItems(id)}
-								>
-									<span style:width="15px" style:display="inline-block"><IoIosTrash /></span
-									></button
-								>
-							</li>
+					<div style="display:flex">
+						{#each [todo, done] as list, index}
+							<div class="list-wrapper">
+								<h2>{index === 0 ? 'Todo' : 'Done'}</h2>
+								<ul>
+									{#each list as { id, title, completed }, index (id)}
+										<!-- {@debug id, title} -->
+										<li animate:flip>
+											<div transition:scale|local={{ start: 0.5 }} class:completed>
+												<label>
+													<input
+														disabled={disabledItems.includes(id)}
+														on:input={(event) => {
+															event.currentTarget.checked = completed;
+															handleToggleCheckBox(id, !completed);
+														}}
+														type="checkbox"
+														checked={completed}
+													/>
+													{title}
+												</label>
+											</div>
+											<button
+												disabled={disabledItems.includes(id)}
+												class="remove-todo-button"
+												aria-label="Remove todo:{title}"
+												on:click={() => handleRemoveItems(id)}
+											>
+												<span style:width="15px" style:display="inline-block"><IoIosTrash /></span
+												></button
+											>
+										</li>
+									{/each}
+								</ul>
+							</div>
 						{/each}
-					</ul>
+					</div>
 				{/if}
 			</div>
 		</div>
@@ -133,67 +143,74 @@
 			text-align: center;
 		}
 		.todo-list {
-			max-height: 250px;
+			max-height: 400px;
 			overflow: auto;
-			ul {
-				margin: 0;
+
+			.list-wrapper {
 				padding: 10px;
-				list-style: none;
+				flex: 1;
+				h2 {
+					margin: 0 0 10px 40px;
+				}
+				ul {
+					margin: 0;
+					list-style: none;
 
-				li {
-					margin-bottom: 5px;
-					display: flex;
-					align-items: center;
-					background-color: #303030;
-					border-radius: 5px;
-					padding: 10px;
-					position: relative;
-					color: #fff;
-
-					:disabled {
-						cursor: not-allowed;
-						opacity: 0.4;
-					}
-					&:hover {
-						.remove-todo-button {
-							display: block;
-						}
-					}
-					&.completed {
-						opacity: 0.5;
-						text-decoration: line-through;
-					}
-					label {
-						cursor: pointer;
-						font-size: 18px;
+					li {
+						margin-bottom: 5px;
 						display: flex;
-						align-items: baseline;
-						padding-right: 25px;
-						input[type='checkbox'] {
-							margin: 0 10px 0 0;
-							cursor: pointer;
-						}
-					}
-					.completed {
-						opacity: 0.5;
-						text-decoration: line-through;
-					}
-
-					.remove-todo-button {
-						border: none;
-						background-color: none;
-						padding: 5px;
-						position: absolute;
-						right: 10px;
-						display: none;
+						align-items: center;
+						background-color: #303030;
+						border-radius: 5px;
+						padding: 10px;
+						position: relative;
+						color: #fff;
 
 						:disabled {
 							cursor: not-allowed;
 							opacity: 0.4;
 						}
+						&:hover {
+							.remove-todo-button {
+								display: block;
+							}
+						}
+						&.completed {
+							opacity: 0.5;
+							text-decoration: line-through;
+						}
+						label {
+							cursor: pointer;
+							font-size: 18px;
+							display: flex;
+							align-items: baseline;
+							padding-right: 25px;
+							input[type='checkbox'] {
+								margin: 0 10px 0 0;
+								cursor: pointer;
+							}
+						}
+						.completed {
+							opacity: 0.5;
+							text-decoration: line-through;
+						}
 
-						:global(svg path) {
-							fill: #bd1414;
+						.remove-todo-button {
+							border: none;
+							background-color: none;
+							padding: 5px;
+							position: absolute;
+							right: 10px;
+							display: none;
+
+							:disabled {
+								cursor: not-allowed;
+								opacity: 0.4;
+							}
+
+							:global(svg path) {
+								fill: #bd1414;
+							}
 						}
 					}
 				}

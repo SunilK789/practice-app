@@ -118,7 +118,7 @@
 </label>
 
 {#if showHide}
-	<div transition:spin style:max-width="400px" style="opacity:0.5">
+	<div transition:spin style:max-width="800px" style="opacity:0.5">
 		<TodoList
 			bind:this={todoList}
 			{todos}
