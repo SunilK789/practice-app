@@ -14,6 +14,9 @@
 	export let disabledItems = [];
 	export let scrollOnAdd = undefined;
 
+	$: done = todos ? todos.filter((t) => t.completed) : [];
+	$: todo = todos ? todos.filter((t) => !t.completed) : [];
+
 
 	const [send, receive] = crossfade({
 		duration:400,
