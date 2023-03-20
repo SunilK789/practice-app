@@ -3,7 +3,7 @@
 <script>
 	import { createEventDispatcher, onMount, onDestroy, beforeUpdate, afterUpdate } from 'svelte';
 	import IoIosTrash from 'svelte-icons/io/IoIosTrash.svelte';
-	import { scale } from 'svelte/transition';
+	import { scale, crossfade } from 'svelte/transition';
 	import Button from './Button.svelte';
 	import { flip } from 'svelte/animate';
 
@@ -13,6 +13,14 @@
 	export let disabelAdding = null;
 	export let disabledItems = [];
 	export let scrollOnAdd = undefined;
+
+
+	const [send, receive] = crossfade({
+		duration:400,
+		fallback(node){
+			return scale(node, {start:0.5, duration:400})
+		}
+	});
 
 	$: done = todos ? todos.filter((t) => t.completed) : [];
 	$: todo = todos ? todos.filter((t) => !t.completed) : [];
@@ -86,14 +94,14 @@
 					<p class="no-item-text">Nothing to display, please add an item!</p>
 				{:else}
 					<div style="display:flex">
-						{#each [todo, done] as list, index}
+						{#each [todo, done] as list, index }
 							<div class="list-wrapper">
 								<h2>{index === 0 ? 'Todo' : 'Done'}</h2>
 								<ul>
 									{#each list as { id, title, completed }, index (id)}
 										<!-- {@debug id, title} -->
 										<li animate:flip>
-											<div transition:scale|local={{ start: 0.5 }} class:completed>
+											<div in:receive|local={{key: id}}  out:send|local={{key: id}} class:completed>
 												<label>
 													<input
 														disabled={disabledItems.includes(id)}
