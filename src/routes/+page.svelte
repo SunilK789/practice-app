@@ -4,6 +4,7 @@
 	import { onMount, tick } from 'svelte';
 	import { debug } from 'svelte/internal';
 	import { fade, fly } from 'svelte/transition';
+	import spin from '../lib/transitions/spin';
 
 	let todoList;
 	let showHide = true;
@@ -47,7 +48,7 @@
 		}).then(async (response) => {
 			if (response.ok) {
 				const todo = await response.json();
-				todos = [...todos, { ...todo, id: uuid() }];
+				todos = [{ ...todo, id: uuid() },...todos];
 				todoList.clearInput();
 			} else {
 				alert('An error has occurred!');
@@ -117,7 +118,7 @@
 </label>
 
 {#if showHide}
-	<div transition:fade={{ delay: 500, duration: 300 }} class="mainDiv" style:max-width="400px">
+	<div transition:spin style:max-width="400px" style="opacity:0.5">
 		<TodoList
 			bind:this={todoList}
 			{todos}
@@ -125,6 +126,7 @@
 			{isLoading}
 			{disabledItems}
 			disabelAdding={isAdding}
+			scrollOnAdd="bottom"
 			on:addtodo={handleAddtodo}
 			on:removetodo={handlRemoveTodos}
 			on:toggleCheckBox={toggleCheckBox}

@@ -3,16 +3,18 @@
 <script>
 	import { createEventDispatcher, onMount, onDestroy, beforeUpdate, afterUpdate } from 'svelte';
 	import IoIosTrash from 'svelte-icons/io/IoIosTrash.svelte';
-  import { scale } from 'svelte/transition';
+	import { scale } from 'svelte/transition';
 	import Button from './Button.svelte';
+	import { flip } from 'svelte/animate';
 
 	export let todos = null;
 	export let error = null;
 	export let isLoading = null;
 	export let disabelAdding = null;
 	export let disabledItems = [];
+	export let scrollOnAdd = undefined;
 
-	let input, listDiv, autoScroll;
+	let input, listDiv, autoScroll, listDivScrollHeight;
 	let prevTodo = todos;
 
 	onMount(() => {});
@@ -59,8 +61,13 @@
 		autoScroll = todos && prevTodo && todos.length > prevTodo.length;
 	}
 	afterUpdate(() => {
-		if (autoScroll) listDiv.scrollTo(0, listDiv.scrollHeight);
-		autoScroll = false;
+		if (scrollOnAdd) {
+			let pos;
+			if (scrollOnAdd === 'top') pos = 0;
+			if (scrollOnAdd === 'bottom') pos = listDivScrollHeight;
+			if (autoScroll) listDiv.scrollTo(0, pos);
+			autoScroll = false;
+		}
 	});
 </script>
 
@@ -71,38 +78,42 @@
 		<p class="no-item-text">{error}</p>
 	{:else if todos}
 		<div bind:this={listDiv} class="todo-list">
-			{#if todos.length === 0}
-				<p class="no-item-text">Nothing to display, please add an item!</p>
-			{:else}
-				<ul>
-					{#each todos as { id, title, completed }, index (id)}
-						<!-- {@debug id, title} -->
-						<li>
-							<div transition:scale|local={{start:0.5}} class:completed={completed}>
-							<label>
-								<input 
+			<div bind:offsetHeight={listDivScrollHeight}>
+				{#if todos.length === 0}
+					<p class="no-item-text">Nothing to display, please add an item!</p>
+				{:else}
+					<ul>
+						{#each todos as { id, title, completed }, index (id)}
+							<!-- {@debug id, title} -->
+							<li animate:flip>
+								<div transition:scale|local={{ start: 0.5 }} class:completed>
+									<label>
+										<input
+											disabled={disabledItems.includes(id)}
+											on:input={(event) => {
+												event.currentTarget.checked = completed;
+												handleToggleCheckBox(id, !completed);
+											}}
+											type="checkbox"
+											checked={completed}
+										/>
+										{title}
+									</label>
+								</div>
+								<button
 									disabled={disabledItems.includes(id)}
-									on:input={(event) => {
-										event.currentTarget.checked = completed;
-										handleToggleCheckBox(id, !completed);
-									}}
-									type="checkbox"
-									checked={completed}
-								/>
-								{title}
-							</label></div>
-							<button
-								disabled={disabledItems.includes(id)}
-								class="remove-todo-button"
-								aria-label="Remove todo:{title}"
-								on:click={() => handleRemoveItems(id)}
-							>
-								<span style:width="15px" style:display="inline-block"><IoIosTrash /></span></button
-							>
-						</li>
-					{/each}
-				</ul>
-			{/if}
+									class="remove-todo-button"
+									aria-label="Remove todo:{title}"
+									on:click={() => handleRemoveItems(id)}
+								>
+									<span style:width="15px" style:display="inline-block"><IoIosTrash /></span
+									></button
+								>
+							</li>
+						{/each}
+					</ul>
+				{/if}
+			</div>
 		</div>
 	{/if}
 	<form class="add-todo-from" on:submit|preventDefault={handleAddtodo}>
@@ -162,8 +173,6 @@
 							margin: 0 10px 0 0;
 							cursor: pointer;
 						}
-
-						
 					}
 					.completed {
 						opacity: 0.5;
@@ -207,9 +216,9 @@
 				margin-right: 10px;
 
 				:disabled {
-						cursor: not-allowed;
-						opacity: 0.4;
-					}
+					cursor: not-allowed;
+					opacity: 0.4;
+				}
 			}
 		}
 	}
