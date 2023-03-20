@@ -1,21 +1,9 @@
 <script>
-  import { onMount } from 'svelte';
-	import tippy  from 'tippy.js';
-	import 'tippy.js/dist/tippy.css';
+  import tippy from '../lib/actions/tippy';
 
-	let button;
-	onMount(()=>{
-		tippy('.tooltip',{
-			content:"this is a tooltip"
-		})
-		tippy(button,{
-			content:"another this is a tooltip"
-		})
-	})
+  let content = "Hello";
 </script>
-
-<button class="tooltip">Button</button>
-<button bind:this={button}>Button</button>
-<button class="tooltip" data-tippy-content="Hello">Button</button>
+<input bind:value={content}>
+<button use:tippy={{content:content, placement: 'right', theme:'light'}}>Button</button>
 <style>
 </style>
