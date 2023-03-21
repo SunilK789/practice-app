@@ -1,18 +1,25 @@
 <script>
+  import { getContext } from 'svelte';
 	import { v4 as uuid } from 'uuid';
+     import formKey from '../Form/form-key'
+
+     
 	export let name;
 	export let type = 'text';
 	export let label = undefined;
 	export let validate = undefined;
 
 	const id = uuid();
+
+    const values = getContext(formKey).values;
+    console.log(values)
 </script>
 
 <div class="field">
 	{#if label}
 		<label for={id}>{label}</label>
 	{/if}
-	<input {id} {name} {type} placeholder={label} />
+	<input {id} {name} {type} placeholder={label} value={values[name] || ''} />
 </div>
 
 <style>
