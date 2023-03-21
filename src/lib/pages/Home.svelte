@@ -1,8 +1,6 @@
 <script>
     import VideoPlayer from '../VideoPlayer.svelte';
-    import videoLink from '$lib/TestVideo.mp4'
-
-    const videoPath = "$lib/TestVideo.mp4"
+    import videoLink from '$lib/TestingVideo.mp4'
 </script>
 
 <div class="flex">
