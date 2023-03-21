@@ -3,7 +3,19 @@
   import {Form, Field} from '../Form'
 </script>
 
-<Form on:submit={() => {}} initialValues={{username:'Test',email:'test@test.com'}}>
+<Form on:submit={(e) => {
+    console.log(e.detail)
+}} initialValues={{username:'Test',email:'test@test.com'}}>
+  <Field label="Username" name="username" type="text" validate={() => {}} />
+  <Field label="Email" name="email" type="email" validate={() => {}} />
+  <Field label="Password" name="password" type="password" validate={() => {}} />
+  <Button type="submit">Submit</Button>
+</Form>
+
+
+<Form on:submit={(e) => {
+    console.log(e.detail)
+}} initialValues={{username:'Test',email:'test@test.com'}}>
   <Field label="Username" name="username" type="text" validate={() => {}} />
   <Field label="Email" name="email" type="email" validate={() => {}} />
   <Field label="Password" name="password" type="password" validate={() => {}} />

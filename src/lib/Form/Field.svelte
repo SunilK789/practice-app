@@ -1,9 +1,8 @@
 <script>
-  import { getContext } from 'svelte';
+	import { getContext } from 'svelte';
 	import { v4 as uuid } from 'uuid';
-     import formKey from '../Form/form-key'
+	import formKey from '../Form/form-key';
 
-     
 	export let name;
 	export let type = 'text';
 	export let label = undefined;
@@ -11,15 +10,24 @@
 
 	const id = uuid();
 
-    const values = getContext(formKey).values;
-    console.log(values)
+	const formStore = getContext(formKey);
+	console.log($formStore.values);
 </script>
 
 <div class="field">
 	{#if label}
 		<label for={id}>{label}</label>
 	{/if}
-	<input {id} {name} {type} placeholder={label} value={values[name] || ''} />
+	<input
+		{id}
+		{name}
+		{type}
+		placeholder={label}
+		value={$formStore.values[name] || ''}
+		on:input={(e) => {
+			$formStore.values[name] = e.currentTarget.value;
+		}}
+	/>
 </div>
 
 <style>
