@@ -24,4 +24,8 @@
 	const layer = getContext(layerKey);
 
 	layer.add(rect);
+
+     onDestroy(() => {
+		if (rect) rect.destroy();
+	});
 </script>
