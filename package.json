@@ -30,6 +30,8 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"canvas": "^2.11.0",
+		"konva": "^8.4.2",
 		"svelte-icons": "^2.1.0",
 		"tippy.js": "^6.3.7",
 		"uuid": "^9.0.0"

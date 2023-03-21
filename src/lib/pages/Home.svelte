@@ -1,23 +1,20 @@
 <script>
-  import Button from '../Button.svelte';
-  import {Form, Field} from '../Form'
+	import { Stage, Layer, Rect } from '../konva';
+
+	let container;
+	let showConvas = true;
 </script>
 
-<Form on:submit={(e) => {
-    console.log(e.detail)
-}} initialValues={{username:'Test',email:'test@test.com'}}>
-  <Field label="Username" name="username" type="text" validate={() => {}} />
-  <Field label="Email" name="email" type="email" validate={() => {}} />
-  <Field label="Password" name="password" type="password" validate={() => {}} />
-  <Button type="submit">Submit</Button>
-</Form>
+<div bind:this={container} />
 
-
-<Form on:submit={(e) => {
-    console.log(e.detail)
-}} initialValues={{username:'Test',email:'test@test.com'}}>
-  <Field label="Username" name="username" type="text" validate={() => {}} />
-  <Field label="Email" name="email" type="email" validate={() => {}} />
-  <Field label="Password" name="password" type="password" validate={() => {}} />
-  <Button type="submit">Submit</Button>
-</Form>
+<label>
+	<input type="checkbox" bind:checked={showConvas} />
+	Show/Hide convas</label
+>
+{#if showConvas}
+	<Stage width={300} height={400}>
+		<Layer>
+			<Rect x={20} y={20} fill="blue" width={150} height={100} />
+		</Layer>
+	</Stage>
+{/if}
